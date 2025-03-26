@@ -1,0 +1,238 @@
+basePath: /
+definitions:
+  controller.CreateLoanRequest:
+    properties:
+      book_id:
+        type: integer
+      user_id:
+        type: integer
+    type: object
+  entities.Author:
+    properties:
+      books:
+        items:
+          $ref: '#/definitions/entities.Book'
+        type: array
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  entities.Book:
+    properties:
+      author:
+        $ref: '#/definitions/entities.Author'
+      author_id:
+        type: integer
+      id:
+        type: integer
+      title:
+        type: string
+    type: object
+  entities.User:
+    properties:
+      Email:
+        type: string
+      ID:
+        type: integer
+      Name:
+        type: string
+      RentedBooks:
+        items:
+          $ref: '#/definitions/entities.Book'
+        type: array
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API для управления библиотекой.
+  title: Library API
+  version: "1.0"
+paths:
+  /authors:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entities.Author'
+            type: array
+      summary: Получить список всех авторов
+      tags:
+      - authors
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Имя автора
+        in: body
+        name: author
+        required: true
+        schema:
+          $ref: '#/definitions/entities.Author'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entities.Author'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Добавить нового автора
+      tags:
+      - authors
+  /authors/top:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entities.Author'
+            type: array
+      summary: Получить топ авторов по количеству выданных книг
+      tags:
+      - authors
+  /books:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entities.Book'
+            type: array
+      summary: Получить список всех книг
+      tags:
+      - books
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Информация о книге
+        in: body
+        name: book
+        required: true
+        schema:
+          $ref: '#/definitions/entities.Book'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entities.Book'
+      summary: Добавить новую книгу
+      tags:
+      - books
+  /loans/borrow:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные аренды (user_id, book_id)
+        in: body
+        name: loan
+        required: true
+        schema:
+          $ref: '#/definitions/controller.CreateLoanRequest'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Книга успешно выдана
+        "400":
+          description: Неверный запрос или книга уже выдана
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Выдать книгу пользователю (создать запись аренды)
+      tags:
+      - loans
+  /loans/return:
+    post:
+      parameters:
+      - description: ID пользователя
+        in: query
+        name: user_id
+        required: true
+        type: integer
+      - description: ID книги
+        in: query
+        name: book_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Книга успешно возвращена
+        "400":
+          description: Неверный запрос или книга не числится в аренде
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Принять книгу обратно в библиотеку (закрыть активный заем)
+      tags:
+      - loans
+  /users:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entities.User'
+            type: array
+      summary: Получить список всех пользователей
+      tags:
+      - users
+  /users/borrowed-books:
+    get:
+      parameters:
+      - description: ID пользователя
+        in: query
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список книг, которые пользователь не вернул
+          schema:
+            items:
+              $ref: '#/definitions/entities.Book'
+            type: array
+        "400":
+          description: Неверный запрос
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить список книг, взятых пользователем в аренду (активные займы)
+      tags:
+      - users
+swagger: "2.0"
