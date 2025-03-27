@@ -130,6 +130,7 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "description": "Добавляет книгу с указанным названием и ID автора",
                 "consumes": [
                     "application/json"
                 ],
@@ -142,12 +143,12 @@ const docTemplate = `{
                 "summary": "Добавить новую книгу",
                 "parameters": [
                     {
-                        "description": "Информация о книге",
+                        "description": "Данные книги",
                         "name": "book",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.Book"
+                            "$ref": "#/definitions/controller.BookCreateRequest"
                         }
                     }
                 ],
@@ -156,6 +157,24 @@ const docTemplate = `{
                         "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/entities.Book"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
@@ -305,6 +324,19 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "controller.BookCreateRequest": {
+            "type": "object",
+            "properties": {
+                "author_id": {
+                    "type": "integer",
+                    "example": 52
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Some Book Title"
+                }
+            }
+        },
         "controller.CreateLoanRequest": {
             "type": "object",
             "properties": {

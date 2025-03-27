@@ -1,5 +1,14 @@
 basePath: /
 definitions:
+  controller.BookCreateRequest:
+    properties:
+      author_id:
+        example: 52
+        type: integer
+      title:
+        example: Some Book Title
+        type: string
+    type: object
   controller.CreateLoanRequest:
     properties:
       book_id:
@@ -126,13 +135,14 @@ paths:
     post:
       consumes:
       - application/json
+      description: Добавляет книгу с указанным названием и ID автора
       parameters:
-      - description: Информация о книге
+      - description: Данные книги
         in: body
         name: book
         required: true
         schema:
-          $ref: '#/definitions/entities.Book'
+          $ref: '#/definitions/controller.BookCreateRequest'
       produces:
       - application/json
       responses:
@@ -140,6 +150,18 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/entities.Book'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
       summary: Добавить новую книгу
       tags:
       - books

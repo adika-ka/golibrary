@@ -23,3 +23,8 @@ type AuthorSummary struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
+
+type BookCreateRequest struct {
+	Title    string `json:"title" example:"Some Book Title"`
+	AuthorID int    `json:"author_id" example:"52"`
+}

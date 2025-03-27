@@ -51,11 +51,14 @@ func GetBooks(bc *BookController) http.HandlerFunc {
 
 // CreateBook godoc
 // @Summary Добавить новую книгу
+// @Description Добавляет книгу с указанным названием и ID автора
 // @Tags books
 // @Accept json
 // @Produce json
-// @Param book body entities.Book true "Информация о книге"
+// @Param book body BookCreateRequest true "Данные книги"
 // @Success 201 {object} entities.Book
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
 // @Router /books [post]
 func CreateBook(bc *BookController) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
